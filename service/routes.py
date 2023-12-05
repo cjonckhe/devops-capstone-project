@@ -68,17 +68,15 @@ def create_accounts():
 # READ AN ACCOUNT
 ######################################################################
 
-@app.route("/accounts", methods=["GET"])
-def read_an_account(account):
-    """
-    Gets an Account
-    """
-    app.logger.info(f"account requested is {account}")
+@app.route("/accounts/<id>", methods=["GET"])
+def read_account(id):
+    """ Gets an Account """
+    app.logger.info(f"account requested is {id}")
 
-    result = Account.find(account)
+    result = Account.find(id)
     app.logger.info(f"account found was {result.name}")
-    if result:
-        return status.HTTP_404_NOT_FOUND
+    if result.status_code == 404:
+        return '', status.HTTP_404_NOT_FOUND
     else:
         data = result.serialize()
     
