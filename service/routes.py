@@ -68,12 +68,19 @@ def list_all_accounts():
     app.logger.info("All accounts requested")
 
     result = Account.all()
+    accounts = []
 
     if not result:
-        return [], status.HTTP_200_OK
+        return jsonify(accounts), status.HTTP_200_OK
         app.logger.info(f"No accounts found")
+
+    for account in result:
+        accounts = accounts + [account.serialize()]
+
+    number_accounts = len(accounts)
+    app.logger.info(f"Number of accounts returned is {number_accounts}")
     
-    return [result], status.HTTP_200_OK
+    return jsonify(accounts), status.HTTP_200_OK
 
 
 ######################################################################
