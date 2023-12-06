@@ -139,7 +139,7 @@ class TestAccountService(TestCase):
 
     def test_List_all_accounts(self):
         """It should list all accounts in DB"""
-        accounts = self._create_accounts(2)
+        self._create_accounts(2)
         response = self.client.get( f"{BASE_URL}" )
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
@@ -152,3 +152,12 @@ class TestAccountService(TestCase):
         data = response.get_json()
         self.assertEqual(len(data), 0)
 
+    def test_update_account(self):
+        """it should update an account"""
+        account = AccountFactory()
+        self.assertIsNotNone(account.id)
+        
+        response = self.client.post(
+            BASE_URL,
+            json=account.serialize()
+        )
