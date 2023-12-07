@@ -152,12 +152,37 @@ class TestAccountService(TestCase):
         data = response.get_json()
         self.assertEqual(len(data), 0)
 
+    def test_update_account_notfound(self):
+        """It should not find an account id that doens't exist"""
+        account = AccountFactory()
+        response = self.client.post(
+            BASE_URL,
+            json=account.serialize(),
+            content_type="application/json"
+        )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        #Fail, account not found
+        response_put = self.client.put( f"{BASE_URL}/0", json=response.get_json())
+        self.assertEqual(response_put.status_code, status.HTTP_404_NOT_FOUND)
+
+
     def test_update_account(self):
         """it should update an account"""
         account = AccountFactory()
-        self.assertIsNotNone(account.id)
-        
         response = self.client.post(
             BASE_URL,
-            json=account.serialize()
+            json=account.serialize(),
+            content_type="application/json"
         )
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED)
+
+        #get account and change the email
+        response_post = response.get_json()
+        self.assertEqual(response_post["name"],account.name)
+        response_post["email"] = "updated@gmail.com"
+        response_put = self.client.put( f"{BASE_URL}/{response_post['id']}", json=response_post)
+        self.assertEqual(response_put.status_code, status.HTTP_200_OK)
+        update_account = response_put.get_json()
+        self.assertEqual(update_account["email"], response_post["email"])
+
