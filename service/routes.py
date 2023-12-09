@@ -6,7 +6,6 @@ This microservice handles the lifecycle of Accounts
 # pylint: disable=unused-import
 from flask import jsonify, request, make_response, abort, url_for   # noqa; F401
 from service.models import Account
-from service.models import logger  #Added to pull logger
 from service.common import status  # HTTP Status Codes
 from . import app  # Import Flask application
 
@@ -52,11 +51,12 @@ def create_accounts():
     account.create()
     message = account.serialize()
     # Uncomment once get_accounts has been implemented
-    #location_url = url_for("get_accounts", account_id=account.id, _external=True)
+    # location_url = url_for("get_accounts", account_id=account.id, _external=True)
     location_url = "/"  # Remove once get_accounts has been implemented
     return make_response(
         jsonify(message), status.HTTP_201_CREATED, {"Location": location_url}
     )
+
 
 ######################################################################
 # LIST ALL ACCOUNTS
@@ -73,7 +73,7 @@ def list_all_accounts():
 
     if not result:
         return jsonify(accounts), status.HTTP_200_OK
-        app.logger.info(f"No accounts found")
+        app.logger.info("No accounts found")
 
     for account in result:
         accounts = accounts + [account.serialize()]
@@ -82,6 +82,7 @@ def list_all_accounts():
     app.logger.info(f"Number of accounts returned is {number_accounts}")
     
     return jsonify(accounts), status.HTTP_200_OK
+
 
 ######################################################################
 # READ AN ACCOUNT
@@ -115,7 +116,7 @@ def update_account(account_id):
     result = Account.find(account_id)
     if not result:
         abort(status.HTTP_404_NOT_FOUND, f"Account id [{account_id}] could not be found")
-    
+
     account = Account()
     account.deserialize(request.get_json())
     account.update()
@@ -137,7 +138,7 @@ def delete_account(account_id):
     result = Account.find(account_id)
     if not result:
         abort(status.HTTP_404_NOT_FOUND, f"Account id [{account_id}] could not be found")
-    
+
     result.delete()
     result_return = ""
     
