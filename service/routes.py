@@ -80,7 +80,7 @@ def list_all_accounts():
 
     number_accounts = len(accounts)
     app.logger.info(f"Number of accounts returned is {number_accounts}")
-    
+
     return jsonify(accounts), status.HTTP_200_OK
 
 
