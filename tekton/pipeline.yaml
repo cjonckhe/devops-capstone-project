@@ -51,7 +51,7 @@ spec:
       runAfter:
         - clone
     
-    - name: nose
+    - name: tests
       workspaces:
         - name: source
           workspace: pipeline-workspace
