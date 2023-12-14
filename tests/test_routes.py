@@ -22,11 +22,11 @@ BASE_URL = "/accounts"
 
 HTTPS_ENVIRON = {'wsgi.url_scheme': 'https'}
 
-#talisman = Talisman(app)
-
 ######################################################################
 #  T E S T   C A S E S
 ######################################################################
+
+
 class TestAccountService(TestCase):
     """Account Service Tests"""
 
@@ -131,21 +131,21 @@ class TestAccountService(TestCase):
     def test_read_an_account(self):
         """it should read a single account"""
         account = self._create_accounts(1)[0]
-        response = self.client.get( f"{BASE_URL}/{account.id}", content_type="application/json" )
+        response = self.client.get(f"{BASE_URL}/{account.id}", content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
-        self.assertEqual(data["name"],account.name)
+        self.assertEqual(data["name"], account.name)
 
     def test_account_not_found(self):
         """it should test account not found"""
         false_account = 0
-        response = self.client.get( f"{BASE_URL}/{false_account}", content_type="application/json" )
+        response = self.client.get(f"{BASE_URL}/{false_account}", content_type="application/json")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_List_all_accounts(self):
         """It should list all accounts in DB"""
         self._create_accounts(2)
-        response = self.client.get( f"{BASE_URL}" )
+        response = self.client.get(f"{BASE_URL}")
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         data = response.get_json()
         self.assertEqual(len(data), 2)
@@ -167,10 +167,9 @@ class TestAccountService(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        #Fail, account not found
-        response_put = self.client.put( f"{BASE_URL}/0", json=response.get_json())
+        # Fail, account not found
+        response_put = self.client.put(f"{BASE_URL}/0", json=response.get_json())
         self.assertEqual(response_put.status_code, status.HTTP_404_NOT_FOUND)
-
 
     def test_update_account(self):
         """it should update an account"""
@@ -182,11 +181,11 @@ class TestAccountService(TestCase):
         )
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
 
-        #get account and change the email
+        # Get account and change the email
         response_post = response.get_json()
-        self.assertEqual(response_post["name"],account.name)
+        self.assertEqual(response_post["name"], account.name)
         response_post["email"] = "updated@gmail.com"
-        response_put = self.client.put( f"{BASE_URL}/{response_post['id']}", json=response_post)
+        response_put = self.client.put(f"{BASE_URL}/{response_post['id']}", json=response_post)
         self.assertEqual(response_put.status_code, status.HTTP_200_OK)
         update_account = response_put.get_json()
         self.assertEqual(update_account["email"], response_post["email"])
@@ -194,15 +193,13 @@ class TestAccountService(TestCase):
     def test_delete_no_account(self):
         """It should delete an account"""
         account = self._create_accounts(1)[0]
-        response = self.client.delete( f"{BASE_URL}/{account.id}")
+        response = self.client.delete(f"{BASE_URL}/{account.id}")
         self.assertEqual(response.status_code, status.HTTP_204_NO_CONTENT)
-        #response_check_delete = self.client.get( f"{BASE_URL}/{account.id}", content_type="application/json" )
-        #self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_delete_account(self):
         """It should return account not found"""
         self._create_accounts(1)[0]
-        response = self.client.delete( f"{BASE_URL}/0")
+        response = self.client.delete(f"{BASE_URL}/0")
         self.assertEqual(response.status_code, status.HTTP_404_NOT_FOUND)
 
     def test_method_not_allowed(self):
